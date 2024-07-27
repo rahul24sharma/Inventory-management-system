@@ -227,7 +227,7 @@ public class ManageUser extends javax.swing.JFrame {
                 ps.executeUpdate();
                 JOptionPane.showMessageDialog(null, "User Updated Successfully");
                 setVisible(false);
-                this.dispose(); // Dispose of the current frame
+//                this.dispose(); // Dispose of the current frame
                 new ManageUser().setVisible(true);
             } catch (Exception e) {
                 JOptionPane.showMessageDialog(null, e);

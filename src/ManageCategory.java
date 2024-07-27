@@ -24,6 +24,23 @@ public class ManageCategory extends javax.swing.JFrame {
         setLocationRelativeTo(null);
 
     }
+    
+    private void refreshTable() {
+    DefaultTableModel model = (DefaultTableModel) tableCategory.getModel();
+    model.setRowCount(0); // Clear the table
+    try {
+        Connection con = ConnectionProvider.getCon();
+        Statement st = con.createStatement();
+        ResultSet rs = st.executeQuery("select * from category");
+        while (rs.next()) {
+            model.addRow(new Object[]{rs.getString("category_pk"), rs.getString("name")});
+        }
+    } catch (Exception e) {
+        JOptionPane.showMessageDialog(null, e);
+    }
+    btnSave.setEnabled(true);
+    btnUpdate.setEnabled(false);
+}
 
     private boolean validateFields() {
         if (!txtName.getText().equals("")) {
@@ -35,6 +52,10 @@ public class ManageCategory extends javax.swing.JFrame {
     
         private void clearFields() {
     txtName.setText("");
+}
+        private void resetFormFields() {
+    txtName.setText("");
+
 }
 
     /**
@@ -153,25 +174,24 @@ public class ManageCategory extends javax.swing.JFrame {
 
     private void btnSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSaveActionPerformed
         // TODO add your handling code here:
-        String name = txtName.getText();
-        if (validateFields()) {
-            JOptionPane.showMessageDialog(null, "All fields are required");
-        } else {
-            try {
-                Connection con = ConnectionProvider.getCon();
-                PreparedStatement ps = con.prepareStatement("insert into category (name) values(?)");
-                ps.setString(1, name);
-                ps.executeUpdate();
-                JOptionPane.showMessageDialog(null, "Category Added Successfully");
-                setVisible(false);
-                clearFields();
-//                new ManageCategory().setVisible(true);
-            }
-            catch (Exception e) {
-                JOptionPane.showMessageDialog(null, e);
-            }
 
+
+String name = txtName.getText();
+    if (validateFields()) {
+        JOptionPane.showMessageDialog(null, "All fields are required");
+    } else {
+        try {
+            Connection con = ConnectionProvider.getCon();
+            PreparedStatement ps = con.prepareStatement("insert into category (name) values(?)");
+            ps.setString(1, name);
+            ps.executeUpdate();
+            JOptionPane.showMessageDialog(null, "Category Added Successfully");
+            clearFields(); // Clear input fields
+            refreshTable(); // Refresh the table data
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, e);
         }
+    }
 
     }//GEN-LAST:event_btnSaveActionPerformed
 
@@ -184,32 +204,38 @@ public class ManageCategory extends javax.swing.JFrame {
         // TODO add your handling code here:
 //        setVisible(false);
 //        new ManageCategory().setVisible(true);
-          this.setVisible(false); 
-          ManageCategory manageCategoryForm = new ManageCategory(); 
-          manageCategoryForm.setVisible(true);
+//          this.setVisible(false); 
+//          ManageCategory manageCategoryForm = new ManageCategory(); 
+//          manageCategoryForm.setVisible(true);
+    resetFormFields();
+
+        // Optionally, repaint or revalidate the form
+        this.repaint();
+        this.revalidate();
+
     }//GEN-LAST:event_btnResetActionPerformed
 
     private void btnUpdateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnUpdateActionPerformed
         // TODO add your handling code here:
-        String name = txtName.getText();
-        if (validateFields()) {
-            JOptionPane.showMessageDialog(null, "All fields are required");
-        } else {
-            try {
-                Connection con = ConnectionProvider.getCon();
-                PreparedStatement ps = con.prepareStatement("update category set name=? where category_pk=?");
-                ps.setString(1, name);
-                ps.setInt(2, categoryPk);
-                ps.executeUpdate();
-                JOptionPane.showMessageDialog(null, "Category Updated Successfully");
-                                setVisible(false);
-                clearFields();
-//                this.dispose(); // Dispose of the current frame
-//                new ManageCategory().setVisible(true);
-            } catch (Exception e) {
-                JOptionPane.showMessageDialog(null, e);
-            }
+
+
+String name = txtName.getText();
+    if (validateFields()) {
+        JOptionPane.showMessageDialog(null, "All fields are required");
+    } else {
+        try {
+            Connection con = ConnectionProvider.getCon();
+            PreparedStatement ps = con.prepareStatement("update category set name=? where category_pk=?");
+            ps.setString(1, name);
+            ps.setInt(2, categoryPk);
+            ps.executeUpdate();
+            JOptionPane.showMessageDialog(null, "Category Updated Successfully");
+            clearFields(); // Clear input fields
+            refreshTable(); // Refresh the table data
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, e);
         }
+    }
     }//GEN-LAST:event_btnUpdateActionPerformed
 
     private void tableCategoryMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tableCategoryMouseClicked

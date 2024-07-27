@@ -5,6 +5,7 @@
 import javax.swing.JOptionPane;
 import java.sql.*;
 import dao.ConnectionProvider;
+
 /**
  *
  * @author divyasharma
@@ -39,6 +40,7 @@ public class Login extends javax.swing.JFrame {
         jLabel4 = new javax.swing.JLabel();
         jLabel7 = new javax.swing.JLabel();
         jLabel6 = new javax.swing.JLabel();
+        jLabel8 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setMinimumSize(new java.awt.Dimension(1350, 768));
@@ -100,10 +102,13 @@ public class Login extends javax.swing.JFrame {
 
         jLabel7.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/logomain.png"))); // NOI18N
         jLabel7.setText("f");
-        getContentPane().add(jLabel7, new org.netbeans.lib.awtextra.AbsoluteConstraints(-2, -23, 1440, 830));
+        getContentPane().add(jLabel7, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 1370, 770));
 
         jLabel6.setText("jLabel6");
         getContentPane().add(jLabel6, new org.netbeans.lib.awtextra.AbsoluteConstraints(870, 100, 380, 530));
+
+        jLabel8.setText("jLabel8");
+        getContentPane().add(jLabel8, new org.netbeans.lib.awtextra.AbsoluteConstraints(930, 70, -1, -1));
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -120,24 +125,23 @@ public class Login extends javax.swing.JFrame {
         // TODO add your handling code here:
         String email = txtEmail.getText();
         String password = txtPassword.getText();
-        
+
         int temp = 0;
-        try{
+        try {
             Connection con = ConnectionProvider.getCon();
             Statement st = con.createStatement();
-            ResultSet rs = st.executeQuery("Select * from appuser where email = '"+email+"' and password = '"+password+"' and status = 'Active'");
-            while (rs.next()){
+            ResultSet rs = st.executeQuery("Select * from appuser where email = '" + email + "' and password = '" + password + "' and status = 'Active'");
+            while (rs.next()) {
                 temp = 1;
                 setVisible(false);
                 //Home
                 new Home(rs.getString("userRole")).setVisible(true);
             }
-            if(temp == 0){
-            JOptionPane.showMessageDialog(null, "Incorrect email or password");
+            if (temp == 0) {
+                JOptionPane.showMessageDialog(null, "Incorrect email or password");
             }
-        }
-        catch(Exception e){
-        JOptionPane.showMessageDialog(null, e);
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, e);
         }
 
     }//GEN-LAST:event_jButton1ActionPerformed
@@ -145,10 +149,10 @@ public class Login extends javax.swing.JFrame {
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         // TODO add your handling code here:
         int a = JOptionPane.showConfirmDialog(null, "Do you want to close the application?", "Select", JOptionPane.YES_NO_OPTION);
-        if(a == 0){
+        if (a == 0) {
             System.exit(0);
         }
-        
+
     }//GEN-LAST:event_jButton2ActionPerformed
 
     /**
@@ -196,6 +200,7 @@ public class Login extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
+    private javax.swing.JLabel jLabel8;
     private javax.swing.JTextField txtEmail;
     private javax.swing.JPasswordField txtPassword;
     // End of variables declaration//GEN-END:variables

@@ -31,6 +31,33 @@ public class ManageCustomer extends javax.swing.JFrame {
             return true;
         }
     }
+    private void resetFormFields() {
+        txtName.setText("");
+        txtMobileNumber.setText("");
+        txtEmail.setText("");
+    }
+    
+    private void refreshTableData() {
+    DefaultTableModel model = (DefaultTableModel) tableCustomer.getModel();
+    model.setRowCount(0); // Clear the existing data
+
+    try {
+        Connection con = ConnectionProvider.getCon();
+        Statement st = con.createStatement();
+        ResultSet rs = st.executeQuery("select * from customer");
+        while (rs.next()) {
+            model.addRow(new Object[]{rs.getString("customer_pk"), rs.getString("name"), rs.getString("mobileNumber"), rs.getString("email")});
+        }
+    } catch (Exception e) {
+        JOptionPane.showMessageDialog(null, e);
+    }
+}
+
+private void clearFields() {
+    txtName.setText("");
+    txtMobileNumber.setText("");
+    txtEmail.setText("");
+}
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -171,28 +198,29 @@ public class ManageCustomer extends javax.swing.JFrame {
     }//GEN-LAST:event_txtNameActionPerformed
 
     private void btnSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSaveActionPerformed
-        // TODO add your handling code here:
-        String name = txtName.getText();
-        String mobileNumber = txtMobileNumber.getText();
-        String email = txtEmail.getText();
 
-        if (validateFields()) {
-            JOptionPane.showMessageDialog(null, "All fields are required!");
-        } else {
-            try {
-                Connection con = ConnectionProvider.getCon();
-                PreparedStatement ps = con.prepareStatement("insert into customer (name, mobileNumber, email) values (?, ?, ?)");
-                ps.setString(1, name);
-                ps.setString(2, mobileNumber);
-                ps.setString(3, email);
-                ps.executeUpdate();
-                JOptionPane.showMessageDialog(null, "Customer Added Successfully!");
-                setVisible(false);
-                new ManageCustomer().setVisible(true);
-            } catch (Exception e) {
-                JOptionPane.showMessageDialog(null, e);
-            }
+
+String name = txtName.getText();
+    String mobileNumber = txtMobileNumber.getText();
+    String email = txtEmail.getText();
+
+    if (validateFields()) {
+        JOptionPane.showMessageDialog(null, "All fields are required!");
+    } else {
+        try {
+            Connection con = ConnectionProvider.getCon();
+            PreparedStatement ps = con.prepareStatement("insert into customer (name, mobileNumber, email) values (?, ?, ?)");
+            ps.setString(1, name);
+            ps.setString(2, mobileNumber);
+            ps.setString(3, email);
+            ps.executeUpdate();
+            JOptionPane.showMessageDialog(null, "Customer Added Successfully!");
+            refreshTableData(); // Refresh the table data
+            clearFields(); // Clear input fields
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, e);
         }
+    }
 
     }//GEN-LAST:event_btnSaveActionPerformed
 
@@ -205,55 +233,65 @@ public class ManageCustomer extends javax.swing.JFrame {
         // TODO add your handling code here:
 //        setVisible(false);
 //        new ManageCustomer().setVisible(true);
-          this.setVisible(false); 
-          ManageCustomer manageCustomerForm = new ManageCustomer(); 
-          manageCustomerForm.setVisible(true); 
+//          this.setVisible(false); 
+//          ManageCustomer manageCustomerForm = new ManageCustomer(); 
+//          manageCustomerForm.setVisible(true); 
+    resetFormFields();
+    
+    // Optionally, repaint or revalidate the form
+    this.repaint();
+    this.revalidate();
     }//GEN-LAST:event_btnResetActionPerformed
 
     private void tableCustomerMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tableCustomerMouseClicked
         // TODO add your handling code here:
-        int index = tableCustomer.getSelectedRow();
-        TableModel model = tableCustomer.getModel();
-        String id = model.getValueAt(index, 0).toString();
-        customerPk = Integer.parseInt(id);
 
-        String name = model.getValueAt(index, 1).toString();
-        txtName.setText(name);
 
-        String mobileNumber = model.getValueAt(index, 2).toString();
-        txtMobileNumber.setText(mobileNumber);
+int index = tableCustomer.getSelectedRow();
+    TableModel model = tableCustomer.getModel();
+    String id = model.getValueAt(index, 0).toString();
+    customerPk = Integer.parseInt(id);
 
-        String email = model.getValueAt(index, 3).toString();
-        txtEmail.setText(email);
+    String name = model.getValueAt(index, 1).toString();
+    txtName.setText(name);
 
-        btnSave.setEnabled(false);
-        btnUpdate.setEnabled(true);
+    String mobileNumber = model.getValueAt(index, 2).toString();
+    txtMobileNumber.setText(mobileNumber);
+
+    String email = model.getValueAt(index, 3).toString();
+    txtEmail.setText(email);
+
+    btnSave.setEnabled(false);
+    btnUpdate.setEnabled(true);
     }//GEN-LAST:event_tableCustomerMouseClicked
 
     private void btnUpdateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnUpdateActionPerformed
         // TODO add your handling code here:
-        String name = txtName.getText();
-        String mobileNumber = txtMobileNumber.getText();
-        String email = txtEmail.getText();
 
-        if (validateFields()) {
-            JOptionPane.showMessageDialog(null, "All fields are required!");
-        } else {
-            try {
-                Connection con = ConnectionProvider.getCon();
-                PreparedStatement ps = con.prepareStatement("update customer set name=?, mobileNumber=?, email=? where customer_pk=?");
-                ps.setString(1, name);
-                ps.setString(2, mobileNumber);
-                ps.setString(3, email);
-                ps.setInt(4, customerPk);
-                ps.executeUpdate();
-                JOptionPane.showMessageDialog(null, "Customer Updated Successfully!");
-                setVisible(false);
-                new ManageCustomer().setVisible(true);
-            } catch (Exception e) {
-                JOptionPane.showMessageDialog(null, e);
-            }
+String name = txtName.getText();
+    String mobileNumber = txtMobileNumber.getText();
+    String email = txtEmail.getText();
+
+    if (validateFields()) {
+        JOptionPane.showMessageDialog(null, "All fields are required!");
+    } else {
+        try {
+            Connection con = ConnectionProvider.getCon();
+            PreparedStatement ps = con.prepareStatement("update customer set name=?, mobileNumber=?, email=? where customer_pk=?");
+            ps.setString(1, name);
+            ps.setString(2, mobileNumber);
+            ps.setString(3, email);
+            ps.setInt(4, customerPk);
+            ps.executeUpdate();
+            JOptionPane.showMessageDialog(null, "Customer Updated Successfully!");
+            refreshTableData(); // Refresh the table data
+            clearFields(); // Clear input fields
+            btnSave.setEnabled(true);
+            btnUpdate.setEnabled(false);
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, e);
         }
+    }
     }//GEN-LAST:event_btnUpdateActionPerformed
 
     /**

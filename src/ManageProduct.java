@@ -25,15 +25,42 @@ public class ManageProduct extends javax.swing.JFrame {
         initComponents();
         setLocationRelativeTo(null);
     }
-    
+
+    private void resetFormFields() {
+        txtName.setText("");
+        txtQuantity.setText("");
+        txtPrice.setText("");
+        txtDescription.setText("");
+    }
+
     private void clearFields() {
-    txtName.setText("");
-    txtQuantity.setText("");
-    txtPrice.setText("");
-    txtDescription.setText("");
-    comboBoxCategory.setSelectedIndex(0);  // Assuming 0 is the index for the default "Select Category" option
-}
-    
+        txtName.setText("");
+        txtQuantity.setText("");
+        txtPrice.setText("");
+        txtDescription.setText("");
+        comboBoxCategory.setSelectedIndex(0);  // Assuming 0 is the index for the default "Select Category" option
+        txtName.setEditable(true);
+        txtQuantity.setEditable(true);
+        txtPrice.setEditable(true);
+        txtDescription.setEditable(true);
+        comboBoxCategory.setEnabled(true);
+    }
+
+    private void refreshTableData() {
+        DefaultTableModel model = (DefaultTableModel) tableProduct.getModel();
+        model.setRowCount(0);  // Clear existing rows
+        try {
+            Connection con = ConnectionProvider.getCon();
+            Statement st = con.createStatement();
+            ResultSet rs = st.executeQuery("select *from product inner join category on product.category_fk = category.category_pk ");
+            while (rs.next()) {
+                model.addRow(new Object[]{rs.getString("product_pk"), rs.getString("name"), rs.getString("quantity"), rs.getString("price"), rs.getString("description"), rs.getString("category_fk"), rs.getString(8)});
+            }
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, e);
+        }
+    }
+
     private void getAllCategory() {
         try {
             Connection con = ConnectionProvider.getCon();
@@ -243,45 +270,15 @@ public class ManageProduct extends javax.swing.JFrame {
                 ps.setString(5, categoryId[0]);
                 ps.executeUpdate();
                 JOptionPane.showMessageDialog(null, "Products Added Successfully");
-                setVisible(false);
-//            this.dispose(); // Dispose of the current frame
-                new ManageProduct().setVisible(true);
+//                setVisible(false);
+//                new ManageProduct().setVisible(true);
+                clearFields();
+                refreshTableData();
             } catch (Exception e) {
                 JOptionPane.showMessageDialog(null, e);
             }
         }
-// String name = txtName.getText();
-//    String quantity = txtQuantity.getText();
-//    String price = txtPrice.getText();
-//    String description = txtDescription.getText();
-//    String category = (String) comboBoxCategory.getSelectedItem();
-//    String categoryId[] = category.split("-", 0);
-//
-//    // Validate fields
-//    if (validateFields("new")) {
-//        JOptionPane.showMessageDialog(null, "All fields are required");
-//    } else {
-//        try {
-//            // Database connection and insertion
-//            Connection con = ConnectionProvider.getCon();
-//            PreparedStatement ps = con.prepareStatement("insert into product (name, quantity, price, description, category_fk) values(?, ?, ?, ?, ?)");
-//            ps.setString(1, name);
-//            ps.setString(2, quantity);
-//            ps.setString(3, price);
-//            ps.setString(4, description);
-//            ps.setString(5, categoryId[0]);
-//            ps.executeUpdate();
-//            JOptionPane.showMessageDialog(null, "Products Added Successfully");
-//            setVisible(false);
-//                new ManageProduct().setVisible(true);
-//
-//            // Clear the fields after successful save
-//            clearFields();
-//            
-//        } catch (Exception e) {
-//            JOptionPane.showMessageDialog(null, e);
-//        }
-//    }
+
     }//GEN-LAST:event_btnSaveActionPerformed
 
     private void btnCloseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCloseActionPerformed
@@ -293,9 +290,14 @@ public class ManageProduct extends javax.swing.JFrame {
         // TODO add your handling code here:
 //        setVisible(false);
 //        new ManageProduct().setVisible(true);
-          this.setVisible(false); 
-          ManageProduct manageProductForm = new ManageProduct(); 
-          manageProductForm.setVisible(true); 
+//          this.setVisible(false); 
+//          ManageProduct manageProductForm = new ManageProduct(); 
+//          manageProductForm.setVisible(true); 
+        resetFormFields();
+
+        // Optionally, repaint or revalidate the form
+        this.repaint();
+        this.revalidate();
     }//GEN-LAST:event_btnResetActionPerformed
 
     private void tableProductMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tableProductMouseClicked
@@ -353,7 +355,7 @@ public class ManageProduct extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(null, "All fields are required");
         } else {
             try {
-                if(!quantity.equals("")){
+                if (!quantity.equals("")) {
                     totalQuantity = totalQuantity + Integer.parseInt(quantity);
                 }
                 Connection con = ConnectionProvider.getCon();
@@ -366,11 +368,10 @@ public class ManageProduct extends javax.swing.JFrame {
                 ps.setInt(6, productPk);
                 ps.executeUpdate();
                 JOptionPane.showMessageDialog(null, "Products Updated Successfully");
-                setVisible(false);
+//                setVisible(false);
+//                new ManageProduct().setVisible(true);
                 clearFields();
-
-//            this.dispose(); // Dispose of the current frame
-                new ManageProduct().setVisible(true);
+                refreshTableData();
             } catch (Exception e) {
                 JOptionPane.showMessageDialog(null, e);
             }
